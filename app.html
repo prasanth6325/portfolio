@@ -1,128 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Train Ticket Booking App</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 700px; margin: 30px auto; padding: 20px; background-color: #f4f7f6; }
-        h1, h2 { color: #2c3e50; text-align: center; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background-color: #007bff; color: white; }
-        input, select, button { width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; font-size: 16px; }
-        button { background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; }
-        button:hover { background-color: #218838; }
-        .ticket { border: 2px dashed #007bff; padding: 15px; background: #e9f5ff; border-radius: 6px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indian Railways Ticket Booking</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 10px;
+    }
+    th {
+      background-color: #1e3a8a;
+      color: white;
+    }
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #15803d;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #166534;
+    }
+    .header-logo {
+      height: 50px;
+      width: auto;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    #message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #15803d;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>🚆 Train Booking App</h1>
-
-    <!-- Available Trains Section -->
+  <div class="container">
+    
+    <!-- Top Header -->
     <div class="card">
-        <h2>Available Trains</h2>
-        <table id="trainTable">
-            <thead>
-                <tr>
-                    <th>Train No</th>
-                    <th>Train Name</th>
-                    <th>Route</th>
-                    <th>Available Seats</th>
-                    <th>Price</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+      <h2>
+        <img src="logo.png" alt="Logo" class="header-logo">
+        Indian Railways Ticket Booking
+      </h2>
     </div>
 
-    <!-- Booking Form Section -->
+    <!-- Available Trains Table -->
     <div class="card">
-        <h2>Book a Ticket</h2>
-        <label>Select Train:</label>
-        <select id="trainSelect"></select>
-        <input type="text" id="passengerName" placeholder="Enter Passenger Name">
-        <input type="number" id="seatCount" placeholder="Number of Seats" min="1">
-        <button onclick="bookTicket()">Book Now</button>
+      <h3>Available Trains</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Train No</th>
+            <th>Train Name</th>
+            <th>Route</th>
+            <th>Available Seats</th>
+            <th>Fare</th>
+          </tr>
+        </thead>
+        <tbody id="train-table-body">
+          <!-- Dynamically populated by JS -->
+        </tbody>
+      </table>
     </div>
 
-    <!-- Confirmation / Output -->
-    <div class="card" id="outputCard" style="display:none;">
-        <h2>Booking Status</h2>
-        <div id="output"></div>
+    <!-- Booking Form -->
+    <div class="card">
+      <h3>Book a Ticket</h3>
+      <form id="booking-form">
+        <div class="form-group">
+          <label for="train-select">Select Train:</label>
+          <select id="train-select" required></select>
+        </div>
+
+        <div class="form-group">
+          <label for="passenger-name">Passenger Name:</label>
+          <input type="text" id="passenger-name" placeholder="Enter Passenger Name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="seats-count">Number of Seats:</label>
+          <input type="number" id="seats-count" min="1" max="10" value="1" required>
+        </div>
+
+        <button type="submit">Book Now</button>
+      </form>
+      <div id="message"></div>
     </div>
 
-    <p style="text-align: center;"><a href="index.html">← Back to Portfolio</a></p>
+    <p><a href="index.html">← Back to Portfolio</a></p>
 
-    <script>
-        const trains = [
-            { id: 101, name: "Express Bullet", source: "Central", dest: "Northside", seats: 50, price: 45.00 },
-            { id: 102, name: "Superfast Flyer", source: "West End", dest: "East Coast", seats: 30, price: 60.00 },
-            { id: 103, name: "Night Coastal", source: "Central", dest: "South Bay", seats: 20, price: 75.00 }
-        ];
+  </div>
 
-        let bookingCounter = 1001;
+  <script>
+    // List of Real Indian Trains
+    const trains = [
+      { id: "22436", name: "Vande Bharat Express", route: "New Delhi (NDLS) → Varanasi (BSB)", seats: 45, fare: 1750 },
+      { id: "12951", name: "Mumbai Rajdhani", route: "Mumbai Central (MMCT) → New Delhi (NDLS)", seats: 30, fare: 2100 },
+      { id: "12002", name: "Bhopal Shatabdi", route: "New Delhi (NDLS) → Rani Kamlapati (RKMP)", seats: 28, fare: 1250 },
+      { id: "12626", name: "Kerala Express", route: "New Delhi (NDLS) → Thiruvananthapuram (TVC)", seats: 60, fare: 1450 },
+      { id: "12840", name: "Howrah Mail", route: "Chennai Central (MAS) → Howrah (HWH)", seats: 18, fare: 1320 }
+    ];
 
-        function displayTrains() {
-            const tbody = document.querySelector("#trainTable tbody");
-            const select = document.getElementById("trainSelect");
-            tbody.innerHTML = "";
-            select.innerHTML = "";
+    // Render Trains to Table and Dropdown
+    function renderTrains() {
+      const tableBody = document.getElementById('train-table-body');
+      const trainSelect = document.getElementById('train-select');
 
-            trains.forEach(t => {
-                tbody.innerHTML += `<tr>
-                    <td>${t.id}</td>
-                    <td>${t.name}</td>
-                    <td>${t.source} ➔ ${t.dest}</td>
-                    <td>${t.seats}</td>
-                    <td>$${t.price.toFixed(2)}</td>
-                </tr>`;
+      tableBody.innerHTML = '';
+      trainSelect.innerHTML = '';
 
-                select.innerHTML += `<option value="${t.id}">${t.name} (#${t.id}) - $${t.price}</option>`;
-            });
-        }
+      trains.forEach(train => {
+        // Populate Table
+        const row = `<tr>
+          <td>${train.id}</td>
+          <td>${train.name}</td>
+          <td>${train.route}</td>
+          <td>${train.seats}</td>
+          <td>₹${train.fare}</td>
+        </tr>`;
+        tableBody.innerHTML += row;
 
-        function bookTicket() {
-            const trainId = parseInt(document.getElementById("trainSelect").value);
-            const name = document.getElementById("passengerName").value.trim();
-            const seats = parseInt(document.getElementById("seatCount").value);
-            const outputCard = document.getElementById("outputCard");
-            const output = document.getElementById("output");
+        // Populate Dropdown
+        const option = document.createElement('option');
+        option.value = train.id;
+        option.textContent = `${train.name} (#${train.id}) - ₹${train.fare}`;
+        trainSelect.appendChild(option);
+      });
+    }
 
-            if (!name || isNaN(seats) || seats <= 0) {
-                alert("Please enter a valid name and number of seats!");
-                return;
-            }
+    // Handle Form Booking Submission
+    document.getElementById('booking-form').addEventListener('submit', function(e) {
+      e.preventDefault();
 
-            const train = trains.find(t => t.id === trainId);
+      const selectedId = document.getElementById('train-select').value;
+      const passengerName = document.getElementById('passenger-name').value;
+      const seatCount = parseInt(document.getElementById('seats-count').value);
 
-            if (train.seats >= seats) {
-                train.seats -= seats;
-                const total = (seats * train.price).toFixed(2);
-                const bookingId = bookingCounter++;
+      const train = trains.find(t => t.id === selectedId);
 
-                outputCard.style.display = "block";
-                output.innerHTML = `
-                    <div class="ticket">
-                        <h3 style="margin-top:0; color:#28a745;">✅ Booking Confirmed!</h3>
-                        <p><strong>Booking ID:</strong> ${bookingId}</p>
-                        <p><strong>Passenger Name:</strong> ${name}</p>
-                        <p><strong>Train:</strong> ${train.name} (#${train.id})</p>
-                        <p><strong>Route:</strong> ${train.source} ➔ ${train.dest}</p>
-                        <p><strong>Seats Booked:</strong> ${seats}</p>
-                        <p><strong>Total Fare:</strong> $${total}</p>
-                    </div>
-                `;
-                displayTrains();
-            } else {
-                outputCard.style.display = "block";
-                output.innerHTML = `<p style="color:red; font-weight:bold;">❌ Booking Failed: Not enough seats available!</p>`;
-            }
-        }
+      if (train && train.seats >= seatCount) {
+        train.seats -= seatCount; // Deduct seats
+        renderTrains(); // Refresh UI table
 
-        displayTrains();
-    </script>
+        const totalCost = train.fare * seatCount;
+        const bookingId = Math.floor(100000 + Math.random() * 900000);
+
+        document.getElementById('message').innerText = 
+          `Success! Booked ${seatCount} seat(s) for ${passengerName} on ${train.name}. Total Fare: ₹${totalCost}. (Booking ID: ${bookingId})`;
+        
+        document.getElementById('passenger-name').value = '';
+      } else {
+        document.getElementById('message').innerText = 'Not enough seats available!';
+        document.getElementById('message').style.color = 'red';
+      }
+    });
+
+    // Initial Render
+    renderTrains();
+  </script>
+
 </body>
 </html>

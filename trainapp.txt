@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train Ticket Booking App</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 700px; margin: 30px auto; padding: 20px; background-color: #f4f7f6; }
+        h1, h2 { color: #2c3e50; text-align: center; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #007bff; color: white; }
+        input, select, button { width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; font-size: 16px; }
+        button { background-color: #28a745; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        button:hover { background-color: #218838; }
+        .ticket { border: 2px dashed #007bff; padding: 15px; background: #e9f5ff; border-radius: 6px; }
+    </style>
+</head>
+<body>
+
+    <h1>🚆 Train Booking App</h1>
+
+    <!-- Available Trains Section -->
+    <div class="card">
+        <h2>Available Trains</h2>
+        <table id="trainTable">
+            <thead>
+                <tr>
+                    <th>Train No</th>
+                    <th>Train Name</th>
+                    <th>Route</th>
+                    <th>Available Seats</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- Booking Form Section -->
+    <div class="card">
+        <h2>Book a Ticket</h2>
+        <label>Select Train:</label>
+        <select id="trainSelect"></select>
+        <input type="text" id="passengerName" placeholder="Enter Passenger Name">
+        <input type="number" id="seatCount" placeholder="Number of Seats" min="1">
+        <button onclick="bookTicket()">Book Now</button>
+    </div>
+
+    <!-- Confirmation / Output -->
+    <div class="card" id="outputCard" style="display:none;">
+        <h2>Booking Status</h2>
+        <div id="output"></div>
+    </div>
+
+    <p style="text-align: center;"><a href="index.html">← Back to Portfolio</a></p>
+
+    <script>
+        const trains = [
+            { id: 101, name: "Express Bullet", source: "Central", dest: "Northside", seats: 50, price: 45.00 },
+            { id: 102, name: "Superfast Flyer", source: "West End", dest: "East Coast", seats: 30, price: 60.00 },
+            { id: 103, name: "Night Coastal", source: "Central", dest: "South Bay", seats: 20, price: 75.00 }
+        ];
+
+        let bookingCounter = 1001;
+
+        function displayTrains() {
+            const tbody = document.querySelector("#trainTable tbody");
+            const select = document.getElementById("trainSelect");
+            tbody.innerHTML = "";
+            select.innerHTML = "";
+
+            trains.forEach(t => {
+                tbody.innerHTML += `<tr>
+                    <td>${t.id}</td>
+                    <td>${t.name}</td>
+                    <td>${t.source} ➔ ${t.dest}</td>
+                    <td>${t.seats}</td>
+                    <td>$${t.price.toFixed(2)}</td>
+                </tr>`;
+
+                select.innerHTML += `<option value="${t.id}">${t.name} (#${t.id}) - $${t.price}</option>`;
+            });
+        }
+
+        function bookTicket() {
+            const trainId = parseInt(document.getElementById("trainSelect").value);
+            const name = document.getElementById("passengerName").value.trim();
+            const seats = parseInt(document.getElementById("seatCount").value);
+            const outputCard = document.getElementById("outputCard");
+            const output = document.getElementById("output");
+
+            if (!name || isNaN(seats) || seats <= 0) {
+                alert("Please enter a valid name and number of seats!");
+                return;
+            }
+
+            const train = trains.find(t => t.id === trainId);
+
+            if (train.seats >= seats) {
+                train.seats -= seats;
+                const total = (seats * train.price).toFixed(2);
+                const bookingId = bookingCounter++;
+
+                outputCard.style.display = "block";
+                output.innerHTML = `
+                    <div class="ticket">
+                        <h3 style="margin-top:0; color:#28a745;">✅ Booking Confirmed!</h3>
+                        <p><strong>Booking ID:</strong> ${bookingId}</p>
+                        <p><strong>Passenger Name:</strong> ${name}</p>
+                        <p><strong>Train:</strong> ${train.name} (#${train.id})</p>
+                        <p><strong>Route:</strong> ${train.source} ➔ ${train.dest}</p>
+                        <p><strong>Seats Booked:</strong> ${seats}</p>
+                        <p><strong>Total Fare:</strong> $${total}</p>
+                    </div>
+                `;
+                displayTrains();
+            } else {
+                outputCard.style.display = "block";
+                output.innerHTML = `<p style="color:red; font-weight:bold;">❌ Booking Failed: Not enough seats available!</p>`;
+            }
+        }
+
+        displayTrains();
+    </script>
+</body>
+</html>
