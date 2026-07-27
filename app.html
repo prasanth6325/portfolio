@@ -73,10 +73,16 @@
       vertical-align: middle;
       margin-right: 10px;
     }
+    /* Output Message Container with Forced Line Breaking */
     #message {
       margin-top: 15px;
-      line-height: 1.6;
+      line-height: 1.8;
       font-size: 15px;
+      text-align: left;
+    }
+    .receipt-item {
+      display: block;
+      margin-top: 6px;
     }
   </style>
 </head>
@@ -131,7 +137,7 @@
         <button type="submit">Book Now</button>
       </form>
 
-      <!-- Step-by-Step Output Display -->
+      <!-- Step-by-Step Output Container -->
       <div id="message"></div>
     </div>
 
@@ -171,7 +177,7 @@
       });
     }
 
-    // Handle Form Booking Submission
+    // Handle Form Submission
     document.getElementById('booking-form').addEventListener('submit', function(e) {
       e.preventDefault();
 
@@ -183,43 +189,42 @@
       const train = trains.find(t => t.id === selectedId);
 
       if (train && train.seats >= seatCount) {
-        train.seats -= seatCount; // Deduct available seats
-        renderTrains(); // Refresh table view
+        train.seats -= seatCount; // Deduct seats
+        renderTrains(); // Refresh table
 
         const totalCost = train.fare * seatCount;
         const bookingId = Math.floor(100000 + Math.random() * 900000);
 
-        // Step-by-Step Receipt Formatting
-        messageElement.style.textAlign = 'left';
-        messageElement.style.marginTop = '15px';
-        messageElement.style.padding = '12px';
-        messageElement.style.borderRadius = '6px';
+        // Explicit block styling to guarantee multi-line receipt view
+        messageElement.style.display = 'block';
         messageElement.style.backgroundColor = '#f0fdf4';
         messageElement.style.border = '1px solid #bbf7d0';
+        messageElement.style.padding = '15px';
+        messageElement.style.borderRadius = '6px';
         messageElement.style.color = '#15803d';
-        
+
         messageElement.innerHTML = `
-          <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">🎉 Booking Successful!</div>
-          • <strong>Passenger:</strong> ${passengerName}<br>
-          • <strong>Train:</strong> ${train.name} (#${train.id})<br>
-          • <strong>Seats Booked:</strong> ${seatCount}<br>
-          • <strong>Total Fare:</strong> ₹${totalCost}<br>
-          • <strong>Booking ID:</strong> ${bookingId}
+          <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">🎉 Booking Successful!</div>
+          <div class="receipt-item"><strong>Step 1:</strong> Passenger Name: ${passengerName}</div>
+          <div class="receipt-item"><strong>Step 2:</strong> Train: ${train.name} (#${train.id})</div>
+          <div class="receipt-item"><strong>Step 3:</strong> Seats Booked: ${seatCount}</div>
+          <div class="receipt-item"><strong>Step 4:</strong> Total Fare: ₹${totalCost}</div>
+          <div class="receipt-item"><strong>Step 5:</strong> Booking ID: ${bookingId}</div>
         `;
-        
+
         document.getElementById('passenger-name').value = '';
       } else {
-        messageElement.style.textAlign = 'center';
+        messageElement.style.display = 'block';
         messageElement.style.backgroundColor = '#fef2f2';
         messageElement.style.border = '1px solid #fecaca';
         messageElement.style.color = '#dc2626';
-        messageElement.style.padding = '10px';
+        messageElement.style.padding = '12px';
         messageElement.style.borderRadius = '6px';
-        messageElement.innerHTML = '<strong>Error:</strong> Not enough seats available on this train.';
+        messageElement.innerHTML = '<strong>Error:</strong> Not enough seats available!';
       }
     });
 
-    // Initial render call
+    // Initial render
     renderTrains();
   </script>
 
